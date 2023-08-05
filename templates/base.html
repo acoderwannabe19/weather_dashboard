@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Pulse</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" />
+  <!-- Google Fonts Roboto -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" >
+  <link rel="stylesheet" href="{% static 'css/fonts.css' %}" >
+  <link rel="stylesheet" href="{% static 'css/mdb.min.css' %}" >
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/onsen/2.10.10/css/ionicons/css/ionicons.min.css">
+</head>
+<body>
+
+  <!-- <canvas id="myChart"></canvas> -->
+
+  {% block content %}
+  {% endblock %}
+    
+
+  
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+    <script>
+    // JavaScript code to create and configure the chart
+    var last_forecasts = JSON.parse('{{ last_forecasts | safe }}');
+    // var lastFourElements = last_forecasts.slice(-4);
+
+    var times3hours = JSON.parse('{{ times3hours | safe }}');
+
+    var ctx = document.getElementById('3hoursForecastsChart').getContext('2d');
+    var myChart;
+
+    function updateChart(data) {
+    // Update the chart data
+    myChart.data.datasets[0].data = data.last_forecasts;
+    myChart.update(); // Redraw the chart
+  }
+
+  function fetchChartData() {
+    // Fetch the updated data from the server
+    fetch('/get_data')
+      .then(response => response.json())
+      .then(data => {
+        updateChart(data); // Update the chart with the fetched data
+      })
+      .catch(error => {
+        console.error('Error fetching forecast data:', error);
+      });
+  }
+
+    function initializeChart() {
+        myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: times3hours,
+            datasets: [{
+                label: "Temperature",
+                data: last_forecasts ,
+                backgroundColor: '#e28743',
+                borderColor: '#873e23',
+                borderWidth: 1
+            }]
+        },
+        options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                        },
+                        grid: {
+                            display: false,
+                            drawBorder: false,
+                        },                  
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                        },
+                        border: {
+                          dash: [2,4],
+                      },
+                        
+                    }
+                }
+            }
+    });
+    fetchChartData(); // Fetch initial chart data
+
+// Schedule chart data refresh every 15 minutes (900000 milliseconds)
+setInterval(fetchChartData, 900000);
+}
+// Call the initializeChart function when the document is loaded
+document.addEventListener('DOMContentLoaded', initializeChart);
+
+    </script>
+    <script>
+        // JavaScript code to create and configure the chart
+        var hourly_temp_list = JSON.parse('{{ hourly_temp_list | safe }}');
+        // var lastFourElements = hourly_temp_list.slice(-4);
+
+        var hours = JSON.parse('{{ hours | safe }}');
+
+        var ctx1 = document.getElementById('hourlyTempChart').getContext('2d');
+        var myChart1;
+
+        function updateChart(data) {
+        // Update the chart data
+        myChart1.data.datasets[0].data = data.hourly_temp_list;
+        myChart1.data.labels = data.hours;
+        myChart1.update(); // Redraw the chart
+    }
+
+    function fetchChartData() {
+        // Fetch the updated data from the server
+        fetch('/get_data')
+        .then(response => response.json())
+        .then(data => {
+            updateChart(data); // Update the chart with the fetched data
+        })
+        .catch(error => {
+            console.error('Error fetching forecast data:', error);
+        });
+    }
+
+        function initializeChart() {
+            myChart1 = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: hours,
+                datasets: [{
+                    label: "Temperature",
+                    data: hourly_temp_list ,
+                    backgroundColor: '#e28743',
+                    borderColor: '#873e23',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Timestamps'
+                            },
+                            grid: {
+                                display: false,
+                                drawBorder: false,
+                            
+                            },                  
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Temperature'
+                            },
+                            border: {
+                            dash: [2,4],
+                        },
+                            
+                        }
+                    }
+                }
+        });
+        fetchChartData(); // Fetch initial chart data
+
+    // Schedule chart data refresh every 15 minutes (900000 milliseconds)
+    setInterval(fetchChartData, 900000);
+    }
+    // Call the initializeChart function when the document is loaded
+    document.addEventListener('DOMContentLoaded', initializeChart);
+
+    </script>
+    <script>
+        // JavaScript code to create and configure the chart
+        var ens = JSON.parse('{{ ens | safe }}');
+        // var lastFourElements = ens.slice(-20);
+
+        var times = JSON.parse('{{ times | safe }}');
+
+        var ctx9 = document.getElementById('ensChart').getContext('2d');
+        var myChart9;
+
+        function updateChart(data) {
+            // Update the chart data
+            myChart9.data.datasets[0].data = data.ens.slice(-20);
+            myChart9.data.labels = data.times;
+            myChart9.update(); // Redraw the chart
+        }
+
+        function fetchChartData() {
+        // Fetch the updated data from the server
+        fetch('/get_data')
+        .then(response => response.json())
+        .then(data => {
+            updateChart(data); // Update the chart with the fetched data
+        })
+        .catch(error => {
+            console.error('Error fetching humidity data:', error);
+        });
+    }
+
+        function initializeChart() {
+            myChart9 = new Chart(ctx9, {
+            type: 'line',
+            data: {
+                labels: times,
+                datasets: [{
+                    label: 'Sunshine',
+                    data: ens ,
+                    backgroundColor: '#E8D62C',
+                    borderColor: '#4B4614',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Timestamps'
+                            },
+                            grid: {
+        display: false
+        }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Temperature'
+                            },
+                            border: {
+                            dash: [2,4],
+                        },
+                        }
+                        
+                        }
+                    }
+                    
+        });
+        fetchChartData();
+
+    setInterval(fetchChartData, 900000);
+    }
+    document.addEventListener('DOMContentLoaded', initializeChart);
+    </script>
+    <script>
+        // JavaScript code to create and configure the chart
+        var hum_list = JSON.parse('{{ hum_list | safe }}');
+        // var lastFourElements = hum_list.slice(-20);
+
+        var times = JSON.parse('{{ times | safe }}');
+
+        var ctx5 = document.getElementById('humChart').getContext('2d');
+        var myChart5;
+
+        function updateChart(data) {
+            // Update the chart data
+            myChart5.data.datasets[0].data = data.hum_list.slice(-20);
+            myChart5.data.labels = data.times;
+            myChart5.update(); // Redraw the chart
+        }
+
+        function fetchChartData() {
+        // Fetch the updated data from the server
+        fetch('/get_data')
+        .then(response => response.json())
+        .then(data => {
+            updateChart(data); // Update the chart with the fetched data
+        })
+        .catch(error => {
+            console.error('Error fetching humidity data:', error);
+        });
+    }
+
+        function initializeChart() {
+            myChart5 = new Chart(ctx5, {
+            type: 'line',
+            data: {
+                labels: times,
+                datasets: [{
+                    label: 'Humidity',
+                    data: hum_list ,
+                    backgroundColor: '#98DFB2',
+                    borderColor: '#12321E',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Timestamps'
+                            },
+                            grid: {
+        display: false
+        }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Temperature'
+                            },
+                            border: {
+                            dash: [2,4],
+                        },
+                        }
+                        
+                        }
+                    }
+                    
+        });
+        fetchChartData();
+
+    setInterval(fetchChartData, 900000);
+    }
+    document.addEventListener('DOMContentLoaded', initializeChart);
+    </script>
+    <script>
+        // JavaScript code to create and configure the chart
+        var temp_list = JSON.parse('{{ temp_list | safe }}');
+        // var lastFourElements = temp_list.slice(-20);
+
+        var times = JSON.parse('{{ times | safe }}');
+
+        var ctx4 = document.getElementById('tempChart').getContext('2d');
+        var myChart4;
+
+        function updateChart(data) {
+            // Update the chart data
+            myChart4.data.datasets[0].data = data.temp_list.slice(-20);
+            myChart4.data.labels = data.times;
+            myChart4.update(); // Redraw the chart
+        }
+
+        function fetchChartData() {
+        // Fetch the updated data from the server
+        fetch('/get_data')
+        .then(response => response.json())
+        .then(data => {
+            updateChart(data); // Update the chart with the fetched data
+        })
+        .catch(error => {
+            console.error('Error fetching temperature data:', error);
+        });
+    }
+
+        function initializeChart() {
+            myChart4 = new Chart(ctx4, {
+            type: 'line',
+            data: {
+                labels: times,
+                datasets: [{
+                    label: "Temperature",
+                    data: temp_list ,
+                    backgroundColor: '#e28743',
+                    borderColor: '#873e23',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Timestamps'
+                            },
+                            grid: {
+                            display: false,
+                            drawBorder: false,
+                            
+                            },
+                        
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Temperature'
+                            },
+                            border: {
+                            dash: [2,4],
+                        },
+                        }
+                        
+                        }
+                    }
+                    
+        });
+        fetchChartData();
+
+    setInterval(fetchChartData, 900000);
+    }
+    document.addEventListener('DOMContentLoaded', initializeChart);
+    
+    </script>
+    <script>
+    // JavaScript code to create and configure the chart
+    var wsp_list = JSON.parse('{{ wsp_list | safe }}');
+        // var lastFourElements = wsp_list.slice(-20);
+
+        var times = JSON.parse('{{ times | safe }}');
+
+        var ctx6 = document.getElementById('windspeedChart').getContext('2d');
+        var myChart6;
+
+        function updateChart(data) {
+            // Update the chart data
+            myChart6.data.datasets[0].data = data.wsp_list.slice(-20);
+            myChart6.data.labels = data.times;
+            myChart6.update(); // Redraw the chart
+        }
+
+        function fetchChartData() {
+        // Fetch the updated data from the server
+        fetch('/get_data')
+        .then(response => response.json())
+        .then(data => {
+            updateChart(data); // Update the chart with the fetched data
+        })
+        .catch(error => {
+            console.error('Error fetching wind speed data:', error);
+        });
+    }
+
+        function initializeChart() {
+            myChart6 = new Chart(ctx6, {
+            type: 'line',
+            data: {
+                labels: times,
+                datasets: [{
+                    label: 'Wind speed',
+                    data: wsp_list ,
+                    backgroundColor: '#eeeee4',
+                    borderColor: '#21130d',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Timestamps'
+                            },
+                            grid: {
+        display: false
+        }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Temperature'
+                            },
+                            border: {
+                            dash: [2,4],
+                        },
+                        }
+                        
+                        }
+                    }
+                    
+        });
+        fetchChartData();
+
+    setInterval(fetchChartData, 900000);
+    }
+    document.addEventListener('DOMContentLoaded', initializeChart);
+    
+    </script>
+    <script>
+      // JavaScript code to create and configure the chart
+      var prec_list = JSON.parse('{{ prec_list | safe }}');
+        // var lastFourElements = prec_list.slice(-20);
+
+        var times = JSON.parse('{{ times | safe }}');
+
+        var ctx7 = document.getElementById('precChart').getContext('2d');
+        var myChart7;
+
+        function updateChart(data) {
+            // Update the chart data
+            myChart7.data.datasets[0].data = data.prec_list.slice(-20);
+            myChart7.data.labels = data.times;
+            myChart7.update(); // Redraw the chart
+        }
+
+        function fetchChartData() {
+        // Fetch the updated data from the server
+        fetch('/get_data')
+        .then(response => response.json())
+        .then(data => {
+            updateChart(data); // Update the chart with the fetched data
+        })
+        .catch(error => {
+            console.error('Error fetching precerature data:', error);
+        });
+    }
+
+        function initializeChart() {
+            myChart7 = new Chart(ctx7, {
+            type: 'line',
+            data: {
+                labels: times,
+                datasets: [{
+                    label: 'Precipitation',
+                    data: prec_list ,
+                    backgroundColor: '#76b5c5',
+                    borderColor: '#063970',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Timestamps'
+                            },
+                            grid: {
+                                display: false
+                                }
+                                                },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Temperature'
+                            },
+                            border: {
+                            dash: [2,4],
+                        },
+                        }
+                        
+                        }
+                    }
+                    
+        });
+        fetchChartData();
+
+    setInterval(fetchChartData, 900000);
+    }
+    document.addEventListener('DOMContentLoaded', initializeChart);
+    
+    </script>
+
+    <script>
+        // JavaScript code to create and configure the chart
+        var daily_temp_list = JSON.parse('{{ daily_temp_list | safe }}');
+        // var lastFourElements = daily_temp_list.slice(-4);
+
+        var days = {{ days | safe }};
+
+        var ctx2 = document.getElementById('dailyTempChart').getContext('2d');
+        var myChart2;
+
+        function updateChart(data) {
+        // Update the chart data
+        myChart2.data.datasets[0].data = data.daily_temp_list;
+        myChart2.data.labels = data.days;
+        myChart2.update(); // Redraw the chart
+    }
+
+    function fetchChartData() {
+        // Fetch the updated data from the server
+        fetch('/get_data')
+        .then(response => response.json())
+        .then(data => {
+            updateChart(data); // Update the chart with the fetched data
+        })
+        .catch(error => {
+            console.error('Error fetching forecast data:', error);
+        });
+    }
+
+        function initializeChart() {
+            myChart2 = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: days,
+                datasets: [{
+                    label: "Temperature",
+                    data: daily_temp_list ,
+                    backgroundColor: '#e28743',
+                    borderColor: '#873e23',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Timestamps'
+                            },
+                            grid: {
+                                display: false,
+                                drawBorder: false,
+                            
+                            },                  
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                // text: 'Temperature'
+                            },
+                            border: {
+                            dash: [2,4],
+                        },
+                            
+                        }
+                    }
+                }
+        });
+        fetchChartData(); // Fetch initial chart data
+
+    // Schedule chart data refresh every 15 minutes (900000 milliseconds)
+    setInterval(fetchChartData, 900000);
+    }
+    // Call the initializeChart function when the document is loaded
+    document.addEventListener('DOMContentLoaded', initializeChart);
+
+    </script>
+    <script src="{% static 'js/jquery-3.4.1.slim.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <!-- <script src="{% static 'js/charts.js' %}"></script> -->
+    <script type="module" src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule="" src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+
+    
+</body>
+</html>

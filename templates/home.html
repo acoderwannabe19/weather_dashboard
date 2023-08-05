@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+
+{% block content %}
+<div class="wrapper d-flex align-items-stretch">
+    <nav style="background-color: #84746c;" id="sidebar" class="active">
+        <div class="custom-menu">
+            <button style="background-color: #5a7081; color: white;" type="button" id="sidebarCollapse" class="btn btn">
+      <i class="fa fa-bars"></i>
+      <span class="sr-only">Toggle Menu</span>
+    </button>
+</div>
+        <div class="p-4" >
+          <h3><a href="" class="logo" >Weather Pulse</a></h3>
+    <ul class="list-unstyled components mb-5">
+      <li class="active">
+        <a href="/"><ion-icon class="mr-2" name="analytics"></ion-icon>Dashboard</a>
+      </li>
+      <li>
+          <a href="/forecast"><ion-icon class="mr-2" name="calendar"></ion-icon>Forecast</a>
+      </li>
+      <li>
+      <a href="/temperature"><ion-icon class="mr-2" name="cloud"></ion-icon>Temperature</a>
+      </li>
+      <li>
+      <a href="/precipitation"><ion-icon class="mr-2" name="umbrella"></ion-icon>Precipitation</a>
+      </li>
+      <li>
+        <a href="/humidity"><ion-icon class="mr-2" name="water"></ion-icon>Humidity</a>
+        </li>
+      <li>
+      <a href="/wind"><span class="fa fa-paper-plane mr-2"></span>Wind</a>
+      </li>
+    </ul>
+
+    <div class="footer" style="margin-top: 130px;">
+        <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <i class="icon-heart" aria-hidden="true"></i> by <a href="#" target="_blank">Weather Pulse</a>
+                  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+    </div>
+
+  </div>
+</nav>
+
+<!-- Page Content  -->
+<div id="content" class="p-4 p-md-5 pt-5">
+<!-- <h2 class="mb-4">Dashboard</h2> -->
+
+<div class="container">
+  <div style="text-align: right;">
+    <h1 id="currentDateTime"></h1>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <div style="color: #29313d; font-size: 30px;"><ion-icon name="thermometer-outline"></ion-icon>Forecasts</ion-icon></div>
+        <div>
+          <div style="font-size: 11px;text-align: center; padding: 30px" class="row">
+            <div class="col-sm">
+              15 min ahead<br/>
+              <span style="font-size: 30px;color: #29313d;">{{ firstEightForecasts.0|floatformat:2 }}°</span>
+            </div>
+            <div class="col-sm">
+              30 min ahead<br/>
+              <span style="font-size: 30px;color: #29313d;">{{ firstEightForecasts.1|floatformat:2 }}°</span>
+            </div>
+            <div class="col-sm">
+              45 min ahead<br/>
+              <span style="font-size: 30px;color: #29313d;">{{ firstEightForecasts.2|floatformat:2 }}°</span>
+            </div>
+            <div class="col-sm">
+              60 min ahead <br/>
+              <span style="font-size: 30px;color: #29313d;">{{ firstEightForecasts.3|floatformat:2 }}°</span>
+            </div>
+            <div class="col-sm">
+              1h15min ahead<br/>
+              <span style="font-size: 30px;color: #29313d;">{{ firstEightForecasts.4|floatformat:2 }}°</span>
+            </div>
+            <div class="col-sm">
+              1h30min ahead<br/>
+              <span style="font-size: 30px;color: #29313d;">{{ firstEightForecasts.5|floatformat:2 }}°</span>
+            </div>
+            <div class="col-sm">
+              1h45min ahead<br/>
+              <span style="font-size: 30px;color: #29313d;">{{ firstEightForecasts.6|floatformat:2 }}°</span>
+            </div>
+            <div class="col-sm">
+              2h ahead <br/>
+              <span style="font-size: 30px;color: #29313d;">{{ firstEightForecasts.7|floatformat:2 }}°</span>
+            </div>
+            
+          </div>
+          <!-- <div style="margin: 5px; width: 450px; height: 300px; align-items: center;justify-content: center;">
+            <canvas id="ensChart"></canvas>
+
+
+          </div> -->
+          
+        </div>
+      </div>
+      <div class="col-sm">
+        <div style="display: flex;
+  justify-content: center;
+  align-items: center;">
+    <div style="background-image: url('https://images.unsplash.com/photo-1428908728789-d2de25dbd4e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8fA%3D%3D&w=1000&q=80'); border-radius: 10px; height: 300px; width: 500px;color: rgb(26, 43, 43);background-repeat: no-repeat;
+    background-size: cover; margin: 10px; margin-bottom: 30px;">
+    <div class="row">
+      <div class="col-sm">
+        <div style="font-weight: lighter; padding: 20px; "><ion-icon name="location"></ion-icon> Thies</div>
+      </div>
+      <div  class="col-sm">
+        <div style="padding: 20px; text-align: right; font-size: 10px; color: grey; ">
+          1 hour ago
+        </div>
+        
+      </div>     
+    </div>
+      <!-- <div style="font-weight: lighter; padding: 20px; "><ion-icon name="location"></ion-icon>Thies</div> -->
+      <div style="font-size: 105px; display: flex;
+      justify-content: center;
+      align-items: center;">{{ mean_temp }}°</div>
+      <!-- <div>{{ state }}</div> -->
+      <div style="text-align: center; font-size: 15px;" class="container">
+        <div class="row">
+          <div class="col-sm">
+            <ion-icon class="mr-2" name="water"></ion-icon>{{ mean_hum }}%
+          </div>
+          <div class="col-sm">
+            <ion-icon class="mr-2" name="umbrella"></ion-icon>{{  mean_prec }}
+          </div>
+          <div class="col-sm">
+            <span class="fa fa-paper-plane mr-2"></span>{{ mean_wsp }} km/h
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+      </div>
+     
+    </div>
+  </div>
+
+  
+
+  <div style="color: #29313d; font-size: 30px; text-align: center; margin: 5px;"><ion-icon name="bulb-outline"></ion-icon>Quarter-Hourly Insights</div>
+  <div class="row">
+    <div style="width: 300px; height: 300px;" class="col">
+      <canvas id="tempChart"></canvas>
+    </div>
+    <div style="width: 300px; height: 300px;" class="col">
+      <canvas id="humChart"></canvas>
+    </div>
+    <div class="w-100"></div>
+    <div style="width: 300px; height: 300px;" class="col">
+      <canvas id="windspeedChart"></canvas>
+    </div>
+    <div style="width: 300px; height: 300px;" class="col">
+      <canvas id="precChart"></canvas>
+    </div>
+    
+  </div>
+  <div style="width: 600px; height: 300px;" >
+    <canvas id="ensChart"></canvas>
+  </div>
+</div>
+
+</div>
+    
+
+
+
+{% endblock %}

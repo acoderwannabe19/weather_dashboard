@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+
+{% block content %}
+<div class="wrapper d-flex align-items-stretch">
+    <nav style="background-color: #84746c;" id="sidebar" class="active">
+        <div class="custom-menu">
+            <button style="background-color: #5a7081; color: white;" type="button" id="sidebarCollapse" class="btn btn">
+      <i class="fa fa-bars"></i>
+      <span class="sr-only">Toggle Menu</span>
+    </button>
+</div>
+        <div class="p-4" >
+          <h3><a href="" class="logo" >Weather Pulse</a></h3>
+    <ul class="list-unstyled components mb-5">
+      <li class="active">
+        <a href="/"><ion-icon class="mr-2" name="analytics"></ion-icon>Dashboard</a>
+      </li>
+      <li>
+          <a href="/forecast"><ion-icon class="mr-2" name="calendar"></ion-icon>Forecast</a>
+      </li>
+      <li>
+      <a href="/temperature"><ion-icon class="mr-2" name="cloud"></ion-icon>Temperature</a>
+      </li>
+      <li>
+      <a href="/precipitation"><ion-icon class="mr-2" name="umbrella"></ion-icon>Precipitation</a>
+      </li>
+      <li>
+        <a href="/humidity"><ion-icon class="mr-2" name="water"></ion-icon>Humidity</a>
+        </li>
+      <li>
+      <a href="/wind"><span class="fa fa-paper-plane mr-2"></span>Wind</a>
+      </li>
+    </ul>
+
+    <div class="footer" style="margin-top: 130px;">
+        <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <i class="icon-heart" aria-hidden="true"></i> by <a href="#" target="_blank">www.ept.sn</a>
+                  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+    </div>
+
+  </div>
+</nav>
+
+<!-- Page Content  -->
+<div id="content" class="p-4 p-md-5 pt-5">
+<!-- <h2 class="mb-4">Dashboard</h2> -->
+jhkjhk
+
+</div>
+    
+
+
+
+{% endblock %}
